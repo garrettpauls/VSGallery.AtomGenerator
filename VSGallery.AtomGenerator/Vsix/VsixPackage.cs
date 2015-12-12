@@ -1,6 +1,7 @@
-﻿using Ionic.Zip;
-using System;
+﻿using System;
 using System.IO;
+using System.IO.Compression;
+using System.Linq;
 
 namespace VSGallery.AtomGenerator.Vsix
 {
@@ -44,20 +45,17 @@ namespace VSGallery.AtomGenerator.Vsix
                 return null;
             }
 
-            using (var zip = new ZipFile(File))
+            using (var zip = ZipFile.OpenRead(File))
             {
-                if (!zip.ContainsEntry(entryName))
+                var entry = zip.Entries.FirstOrDefault(x => x.FullName == entryName);
+                if (entry == null)
                 {
                     return null;
                 }
 
-                var icon = zip[entryName];
                 var iconPath = Path.Combine(destinationFolder, Id, entryName);
                 Directory.CreateDirectory(Path.GetDirectoryName(iconPath));
-                using (var stream = new FileStream(iconPath, FileMode.Create))
-                {
-                    icon.Extract(stream);
-                }
+                entry.ExtractToFile(iconPath, true);
 
                 return new Uri(iconPath);
             }

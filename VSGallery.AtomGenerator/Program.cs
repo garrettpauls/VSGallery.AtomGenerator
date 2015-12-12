@@ -37,7 +37,7 @@ namespace VSGallery.AtomGenerator
             var packageFactory = new VsixPackageFactory();
             var packages = Directory
                 .EnumerateFiles(rootDirectory, "*.vsix", SearchOption.AllDirectories)
-                .Select(packageFactory.LoadFromFile)
+                .Select(file => packageFactory.LoadFromFile(file, log))
                 .Do(result => result.IfError(log.Error))
                 .TakeSuccess();
 
