@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
 [assembly: AssemblyTitle("VSGallery.AtomGenerator")]
-[assembly: AssemblyDescription("Generates an atom feed file for custom visual studio galleries.")]
+[assembly: AssemblyDescription("Generates an atom feed for custom visual studio galleries.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("VSGallery.AtomGenerator")]
