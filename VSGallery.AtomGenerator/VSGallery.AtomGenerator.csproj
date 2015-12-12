@@ -22,6 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -32,7 +33,14 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>VSGallery.AtomGenerator.Program</StartupObject>
+  </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Ionic.Zip, Version=1.9.7.0, Culture=neutral, PublicKeyToken=6583c7c814667745, processorArchitecture=MSIL">
+      <HintPath>..\packages\DotNetZip.1.9.7\lib\net20\Ionic.Zip.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -43,11 +51,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Infrastructure\Error.cs" />
+    <Compile Include="Infrastructure\ErrorExtensions.cs" />
+    <Compile Include="Infrastructure\ErrorSuccessFactory.cs" />
+    <Compile Include="Infrastructure\ErrorSuccess.cs" />
+    <Compile Include="Infrastructure\Linq\EnumerableExtensions.cs" />
+    <Compile Include="Infrastructure\Success.cs" />
+    <Compile Include="Infrastructure\Threading\TaskExtensions.cs" />
+    <Compile Include="Logger.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Vsix\Schemas\Atom.cs" />
     <Compile Include="Vsix\Schemas\PackageManifestSchema.cs" />
-    <Compile Include="Vsix\Schemas\VsixSchemaSets.cs" />
+    <Compile Include="Vsix\Schemas\SchemaSets.cs" />
     <Compile Include="Vsix\VsixPackageFactory.cs" />
     <Compile Include="Vsix\VsixPackage.cs" />
   </ItemGroup>
@@ -68,6 +84,7 @@
     <EmbeddedResource Include="Vsix\Schemas\PackageManifest\PackageManifestSchema.xsd">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Vsix\Schemas\Atom\Atom.xsd">
       <SubType>Designer</SubType>
     </None>
