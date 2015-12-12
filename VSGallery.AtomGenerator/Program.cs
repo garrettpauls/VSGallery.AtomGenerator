@@ -13,6 +13,12 @@ namespace VSGallery.AtomGenerator
     {
         public static void Main(string[] args)
         {
+            if (args.Any(arg => arg == "/?" || arg == "/help" || arg == "--help"))
+            {
+                _ShowUsage();
+                return;
+            }
+
             var rootDirectory = args.FirstOrDefault(Directory.Exists) ?? Environment.CurrentDirectory;
             var log = Logger.Create(Path.Combine(rootDirectory, "logs", $"log_{DateTime.Now.ToString("yyyy-MM-dd_hh-mm-ss")}.txt"));
 
@@ -49,6 +55,15 @@ namespace VSGallery.AtomGenerator
                 .GroupBy(pkg => pkg.Id)
                 .Select(grp => grp.OrderByDescending(pkg => pkg.Version, new VersionComparer())
                                   .First());
+        }
+
+        private static void _ShowUsage()
+        {
+            Console.WriteLine(@"Generates an atom.xml file containing a feed of all *.vsix files in the same and subdirectories.
+
+If any arguments are supplied, the first argument corresponding to a valid directory will be used as the directory for the feed and fsix files.
+If no arguments correspond to a valid directory the current working directory will be used.
+");
         }
     }
 }
