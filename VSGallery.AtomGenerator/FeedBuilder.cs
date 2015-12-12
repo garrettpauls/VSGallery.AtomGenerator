@@ -15,13 +15,18 @@ namespace VSGallery.AtomGenerator
         public void WriteFeed(string feedFile, IEnumerable<IVsixPackage> packages)
         {
             var rootDirectory = new Uri(Path.GetDirectoryName(feedFile) + "\\");
+
+            var imageRoot = Path.Combine(rootDirectory.AbsolutePath, "VSIXImages");
+            Directory.CreateDirectory(imageRoot);
+
             var feed = _ConfigureFromExistingFeed(feedFile);
             feed.LastUpdatedTime = DateTimeOffset.Now;
-            _AddPackages(rootDirectory, packages, feed);
+
+            _AddPackages(rootDirectory, imageRoot, packages, feed);
             _WriteAtomFeed(feedFile, feed);
         }
 
-        private static void _AddPackages(Uri root, IEnumerable<IVsixPackage> packages, SyndicationFeed feed)
+        private static void _AddPackages(Uri root, string imageRoot, IEnumerable<IVsixPackage> packages, SyndicationFeed feed)
         {
             // See https://msdn.microsoft.com/en-us/library/hh266717.aspx
 
@@ -45,7 +50,7 @@ namespace VSGallery.AtomGenerator
                 item.Authors.Add(new SyndicationPerson { Name = pkg.Publisher });
                 item.Content = SyndicationContent.CreateUrlContent(root.MakeRelativeUri(new Uri(pkg.File)), "application/octet-stream");
 
-                // TODO: add preview links
+                _AddPreviewImages(root, imageRoot, item, pkg);
 
                 var ns = XNamespace.Get("http://schemas.microsoft.com/developer/vsx-syndication-schema/2010");
                 var xsi = XNamespace.Get("http://www.w3.org/2001/XMLSchema-instance");
@@ -72,6 +77,22 @@ namespace VSGallery.AtomGenerator
                 }
 
                 items.Add(item);
+            }
+        }
+
+        private static void _AddPreviewImages(Uri root, string imageRoot, SyndicationItem item, IVsixPackage pkg)
+        {
+            var icon = pkg.TrySaveIcon(imageRoot);
+            var preview = pkg.TrySavePreviewImage(imageRoot);
+
+            if (icon != null)
+            {
+                item.Links.Add(new SyndicationLink(root.MakeRelativeUri(icon), "icon", "", "", 0));
+            }
+
+            if (preview != null)
+            {
+                item.Links.Add(new SyndicationLink(root.MakeRelativeUri(preview), "previewimage", "", "", 0));
             }
         }
 

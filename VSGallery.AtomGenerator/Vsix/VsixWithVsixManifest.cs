@@ -1,26 +1,20 @@
 namespace VSGallery.AtomGenerator.Vsix
 {
-    public sealed class VsixWithVsixManifest : IVsixPackage
+    public sealed class VsixWithVsixManifest : VsixPackage
     {
-        private readonly string mFile;
         private readonly Schemas.Vsix mManifest;
 
-        public VsixWithVsixManifest(string file, Schemas.Vsix manifest)
+        public VsixWithVsixManifest(string file, Schemas.Vsix manifest) : base(file)
         {
-            mFile = file;
             mManifest = manifest;
         }
 
-        public string Description => mManifest.Identifier.Description;
-
-        public string DisplayName => mManifest.Identifier.Name;
-
-        public string File => mFile;
-
-        public string Id => mManifest.Identifier.Id;
-
-        public string Publisher => mManifest.Identifier.Author;
-
-        public string Version => mManifest.Identifier.Version;
+        public override string Description => mManifest.Identifier.Description;
+        public override string DisplayName => mManifest.Identifier.Name;
+        public override string Id => mManifest.Identifier.Id;
+        public override string Publisher => mManifest.Identifier.Author;
+        public override string Version => mManifest.Identifier.Version;
+        protected override string IconName => mManifest.Identifier.Icon;
+        protected override string PreviewImageName => mManifest.Identifier.PreviewImage;
     }
 }

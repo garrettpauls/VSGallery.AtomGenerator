@@ -10,5 +10,9 @@ namespace VSGallery.AtomGenerator.Vsix
         string Id { get; }
         string Publisher { get; }
         string Version { get; }
+
+        Uri TrySaveIcon(string destinationFolder);
+
+        Uri TrySavePreviewImage(string destinationFolder);
     }
 }

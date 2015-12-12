@@ -68,6 +68,7 @@
     <Compile Include="Vsix\Schemas\PackageManifestSchema.cs" />
     <Compile Include="Vsix\Schemas\SchemaSets.cs" />
     <Compile Include="Vsix\Schemas\VsixManifestSchema.cs" />
+    <Compile Include="Vsix\VsixPackage.cs" />
     <Compile Include="Vsix\VsixPackageFactory.cs" />
     <Compile Include="Vsix\VsixWithPackageManifest.cs" />
     <Compile Include="Vsix\VsixWithVsixManifest.cs" />
