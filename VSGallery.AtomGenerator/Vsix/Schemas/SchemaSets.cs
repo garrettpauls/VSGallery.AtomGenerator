@@ -13,13 +13,12 @@ namespace VSGallery.AtomGenerator.Vsix.Schemas
         private static readonly Lazy<XmlSchemaSet> mPackageManifestSchemaSet =
                     new Lazy<XmlSchemaSet>(() => _LoadSchemaSetFromSubdirectory("PackageManifest"));
 
+        private static readonly Lazy<XmlSchemaSet> mVsixManifestSchemaSet =
+            new Lazy<XmlSchemaSet>(() => _LoadSchemaSetFromSubdirectory("VsixManifest"));
+
         public static XmlSchemaSet Atom => mAtomSchemaSet.Value;
-
         public static XmlSchemaSet PackageManifest => mPackageManifestSchemaSet.Value;
-
-        public static void Validate()
-        {
-        }
+        public static XmlSchemaSet VsixManifest => mVsixManifestSchemaSet.Value;
 
         private static IEnumerable<string> _GetResourceNamesIn(string subdirectory)
         {

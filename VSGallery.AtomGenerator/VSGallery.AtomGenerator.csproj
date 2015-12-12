@@ -52,6 +52,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FeedBuilder.cs" />
     <Compile Include="Infrastructure\Error.cs" />
     <Compile Include="Infrastructure\ErrorExtensions.cs" />
     <Compile Include="Infrastructure\ErrorSuccessFactory.cs" />
@@ -59,14 +60,17 @@
     <Compile Include="Infrastructure\Linq\EnumerableExtensions.cs" />
     <Compile Include="Infrastructure\Success.cs" />
     <Compile Include="Infrastructure\Threading\TaskExtensions.cs" />
+    <Compile Include="Infrastructure\VersionComparer.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Vsix\Schemas\Atom.cs" />
+    <Compile Include="Vsix\IVsixPackage.cs" />
     <Compile Include="Vsix\Schemas\PackageManifestSchema.cs" />
     <Compile Include="Vsix\Schemas\SchemaSets.cs" />
+    <Compile Include="Vsix\Schemas\VsixManifestSchema.cs" />
     <Compile Include="Vsix\VsixPackageFactory.cs" />
-    <Compile Include="Vsix\VsixPackage.cs" />
+    <Compile Include="Vsix\VsixWithPackageManifest.cs" />
+    <Compile Include="Vsix\VsixWithVsixManifest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -86,10 +90,7 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="packages.config" />
-    <None Include="Vsix\Schemas\Atom\Atom.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Vsix\Schemas\Atom\Xml.xsd">
+    <None Include="Vsix\Schemas\VsixManifest\VSIXManifestSchema.xsd">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
