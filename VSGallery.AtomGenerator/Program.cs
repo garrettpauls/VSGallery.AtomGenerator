@@ -24,10 +24,6 @@ namespace VSGallery.AtomGenerator
             {
                 log.Error("Application level exception", ex);
             }
-            finally
-            {
-                log.Dispose();
-            }
         }
 
         private static void _GenerateAtomFeed(string rootDirectory, Logger log)

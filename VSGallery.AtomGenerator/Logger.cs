@@ -1,19 +1,15 @@
 ﻿using System;
 using System.IO;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace VSGallery.AtomGenerator
 {
-    public sealed class Logger : IDisposable
+    public sealed class Logger
     {
-        private readonly StreamWriter mFile;
+        private readonly string mFile;
 
         private Logger(string file)
         {
-            mFile = new StreamWriter(
-                File.Open(file, FileMode.Create, FileAccess.Write, FileShare.Read),
-                Encoding.UTF8);
+            mFile = file;
         }
 
         public static Logger Create(string file)
@@ -27,11 +23,6 @@ namespace VSGallery.AtomGenerator
             return new Logger(file);
         }
 
-        public void Dispose()
-        {
-            mFile.Dispose();
-        }
-
         public void Error(string message)
         {
             Error(message, null);
@@ -39,20 +30,10 @@ namespace VSGallery.AtomGenerator
 
         public void Error(string message, Exception ex)
         {
-            ErrorAsync(message, ex).Wait();
-        }
-
-        public Task ErrorAsync(string message)
-        {
-            return ErrorAsync(message, null);
-        }
-
-        public async Task ErrorAsync(string message, Exception ex)
-        {
-            await mFile.WriteLineAsync($"ERROR: {message}");
+            _WriteLine($"ERROR: {message}");
             if (ex != null)
             {
-                await mFile.WriteLineAsync($@"
+                _WriteLine($@"
 --------------------------------------------------
 {_ToString(ex)}
 --------------------------------------------------");
@@ -61,17 +42,17 @@ namespace VSGallery.AtomGenerator
 
         public void Info(string message)
         {
-            InfoAsync(message).Wait();
-        }
-
-        public Task InfoAsync(string message)
-        {
-            return mFile.WriteLineAsync($"INFO: {message}");
+            _WriteLine($"INFO: {message}");
         }
 
         private static string _ToString(Exception exception)
         {
             return exception.ToString();
+        }
+
+        private void _WriteLine(string value)
+        {
+            File.AppendAllText(mFile, value + "\r\n");
         }
     }
 }

@@ -110,7 +110,7 @@ namespace VSGallery.AtomGenerator
             {
                 var feed = new SyndicationFeed();
                 feed.Id = Guid.NewGuid().ToString("D").ToUpper();
-                feed.Title = new TextSyndicationContent("TODO: add a title");
+                feed.Title = new TextSyndicationContent("");
                 feed.Generator = "VSGallery.AtomGenerator";
                 return feed;
             }
