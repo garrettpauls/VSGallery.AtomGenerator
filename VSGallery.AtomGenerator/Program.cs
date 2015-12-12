@@ -14,7 +14,7 @@ namespace VSGallery.AtomGenerator
         public static void Main(string[] args)
         {
             var rootDirectory = args.FirstOrDefault(Directory.Exists) ?? Environment.CurrentDirectory;
-            var log = new Logger(Path.Combine(rootDirectory, "logs", $"log_{DateTime.Now.ToString("yyyy-MM-dd_hh-mm-ss")}.txt"));
+            var log = Logger.Create(Path.Combine(rootDirectory, "logs", $"log_{DateTime.Now.ToString("yyyy-MM-dd_hh-mm-ss")}.txt"));
 
             try
             {
@@ -36,7 +36,6 @@ namespace VSGallery.AtomGenerator
             var packages = Directory
                 .EnumerateFiles(rootDirectory, "*.vsix", SearchOption.AllDirectories)
                 .Select(packageFactory.LoadFromFile)
-                .WhenAll().Result
                 .Do(result => result.IfError(log.Error))
                 .TakeSuccess()
                 .ToArray();

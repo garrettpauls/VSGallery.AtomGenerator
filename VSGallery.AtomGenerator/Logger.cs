@@ -9,11 +9,22 @@ namespace VSGallery.AtomGenerator
     {
         private readonly StreamWriter mFile;
 
-        public Logger(string file)
+        private Logger(string file)
         {
             mFile = new StreamWriter(
                 File.Open(file, FileMode.Create, FileAccess.Write, FileShare.Read),
                 Encoding.UTF8);
+        }
+
+        public static Logger Create(string file)
+        {
+            var logDir = Directory.GetParent(file);
+            if (!logDir.Exists)
+            {
+                logDir.Create();
+            }
+
+            return new Logger(file);
         }
 
         public void Dispose()

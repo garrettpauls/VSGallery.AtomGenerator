@@ -14,7 +14,12 @@ namespace VSGallery.AtomGenerator.Vsix.Schemas
                     new Lazy<XmlSchemaSet>(() => _LoadSchemaSetFromSubdirectory("PackageManifest"));
 
         public static XmlSchemaSet Atom => mAtomSchemaSet.Value;
+
         public static XmlSchemaSet PackageManifest => mPackageManifestSchemaSet.Value;
+
+        public static void Validate()
+        {
+        }
 
         private static IEnumerable<string> _GetResourceNamesIn(string subdirectory)
         {
