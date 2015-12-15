@@ -34,3 +34,20 @@ be extracted to a subfolder of the root directory named VSIXImages.
 
 If any vsix files do not contain a valid manifest or any other
 errors occur, they will be logged to a file in the log subdirectory.
+
+# Changelog
+
+The changelog of all versions.
+Issue details can be found by number in the [issue tracker](https://github.com/garrettpauls/VSGallery.AtomGenerator/issues).
+
+## v1.0.1
+
+* Issue #1 - zip entry names for images are normalized to support both / and \ in the manifest file.
+* Issue #2 - added more verbose logging and output to stdout.
+
+## v1.0.0
+
+* Initial release with base functionality.
+* Generates atom.xml based on .vsix files in the supplied directory.
+* Supports both PackageManifest and Vsix manifest based files.
+* Extracts icons and preview images from .vsix files.
