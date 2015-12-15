@@ -2,6 +2,7 @@
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace VSGallery.AtomGenerator.Vsix
 {
@@ -38,6 +39,13 @@ namespace VSGallery.AtomGenerator.Vsix
             return _SaveEntry(destinationFolder, PreviewImageName);
         }
 
+        private static string _NormalizeZipEntryName(string value)
+        {
+            value = value.Replace('\\', '/');
+            value = Regex.Replace(value, "[/]{2,}", "/");
+            return value;
+        }
+
         private Uri _SaveEntry(string destinationFolder, string entryName)
         {
             if (string.IsNullOrEmpty(entryName))
@@ -45,9 +53,11 @@ namespace VSGallery.AtomGenerator.Vsix
                 return null;
             }
 
+            entryName = _NormalizeZipEntryName(entryName);
+
             using (var zip = ZipFile.OpenRead(File))
             {
-                var entry = zip.Entries.FirstOrDefault(x => x.FullName == entryName);
+                var entry = zip.GetEntry(entryName);
                 if (entry == null)
                 {
                     return null;
