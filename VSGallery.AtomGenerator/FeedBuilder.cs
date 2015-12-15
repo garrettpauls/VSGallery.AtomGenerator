@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.ServiceModel.Syndication;
 using System.Text;
 using System.Xml;
@@ -12,36 +13,36 @@ namespace VSGallery.AtomGenerator
 {
     public sealed class FeedBuilder
     {
-        public void WriteFeed(string feedFile, IEnumerable<IVsixPackage> packages)
+        public void WriteFeed(string feedFile, IEnumerable<IVsixPackage> packages, Logger log)
         {
             var rootDirectory = new Uri(Path.GetDirectoryName(feedFile) + "\\");
 
             var imageRoot = Path.Combine(rootDirectory.AbsolutePath, "VSIXImages");
             Directory.CreateDirectory(imageRoot);
 
-            var feed = _ConfigureFromExistingFeed(feedFile);
+            var feed = _ConfigureFromExistingFeed(feedFile, log);
             feed.LastUpdatedTime = DateTimeOffset.Now;
 
-            _AddPackages(rootDirectory, imageRoot, packages, feed);
-            _WriteAtomFeed(feedFile, feed);
+            _AddPackages(rootDirectory, imageRoot, packages, feed, log);
+            _WriteAtomFeed(feedFile, feed, log);
         }
 
-        private static void _AddPackages(Uri root, string imageRoot, IEnumerable<IVsixPackage> packages, SyndicationFeed feed)
+        private static void _AddPackages(Uri root, string imageRoot, IEnumerable<IVsixPackage> packages, SyndicationFeed feed, Logger log)
         {
             // See https://msdn.microsoft.com/en-us/library/hh266717.aspx
 
             var items = new List<SyndicationItem>();
             feed.Items = items;
 
-            foreach (var pkg in packages)
+            var orderedPackages = packages
+                .OrderBy(pkg => pkg.DisplayName)
+                .ThenBy(pkg => pkg.Id);
+
+            foreach (var pkg in orderedPackages)
             {
-                var item = new SyndicationItem(
-                    pkg.DisplayName,
-                    pkg.Description,
-                    new Uri(pkg.File),
-                    pkg.Id,
-                    new DateTimeOffset(File.GetLastWriteTimeUtc(pkg.File)));
-                item = new SyndicationItem();
+                log.Info($"Adding package {pkg.DisplayName} ({pkg.Id}) to feed");
+
+                var item = new SyndicationItem();
                 item.Id = pkg.Id;
                 item.Title = new TextSyndicationContent(pkg.DisplayName);
                 item.Summary = new TextSyndicationContent(pkg.Description);
@@ -50,7 +51,7 @@ namespace VSGallery.AtomGenerator
                 item.Authors.Add(new SyndicationPerson { Name = pkg.Publisher });
                 item.Content = SyndicationContent.CreateUrlContent(root.MakeRelativeUri(new Uri(pkg.File)), "application/octet-stream");
 
-                _AddPreviewImages(root, imageRoot, item, pkg);
+                _AddPreviewImages(root, imageRoot, item, pkg, log);
 
                 var ns = XNamespace.Get("http://schemas.microsoft.com/developer/vsx-syndication-schema/2010");
                 var xsi = XNamespace.Get("http://www.w3.org/2001/XMLSchema-instance");
@@ -80,30 +81,44 @@ namespace VSGallery.AtomGenerator
             }
         }
 
-        private static void _AddPreviewImages(Uri root, string imageRoot, SyndicationItem item, IVsixPackage pkg)
+        private static void _AddPreviewImages(Uri root, string imageRoot, SyndicationItem item, IVsixPackage pkg, Logger log)
         {
             var icon = pkg.TrySaveIcon(imageRoot);
             var preview = pkg.TrySavePreviewImage(imageRoot);
 
             if (icon != null)
             {
+                log.Info($"Extracted icon to {icon}");
                 item.Links.Add(new SyndicationLink(root.MakeRelativeUri(icon), "icon", "", "", 0));
+            }
+            else
+            {
+                log.Info("No icon found");
             }
 
             if (preview != null)
             {
+                log.Info($"Extracted preview image to {preview}");
                 item.Links.Add(new SyndicationLink(root.MakeRelativeUri(preview), "previewimage", "", "", 0));
+            }
+            else
+            {
+                log.Info("No preview image found");
             }
         }
 
-        private static SyndicationFeed _ConfigureFromExistingFeed(string file)
+        private static SyndicationFeed _ConfigureFromExistingFeed(string file, Logger log)
         {
             try
             {
                 using (var stream = File.OpenRead(file))
                 using (var reader = XmlReader.Create(stream))
                 {
-                    return SyndicationFeed.Load(reader);
+                    var feed = SyndicationFeed.Load(reader);
+
+                    log.Info($"Configured base feed information from {file}");
+
+                    return feed;
                 }
             }
             catch
@@ -112,11 +127,14 @@ namespace VSGallery.AtomGenerator
                 feed.Id = Guid.NewGuid().ToString("D").ToUpper();
                 feed.Title = new TextSyndicationContent("");
                 feed.Generator = "VSGallery.AtomGenerator";
+
+                log.Info($"Existing feed file {file} not found, generating a new feed id");
+
                 return feed;
             }
         }
 
-        private static void _WriteAtomFeed(string file, SyndicationFeed feed)
+        private static void _WriteAtomFeed(string file, SyndicationFeed feed, Logger log)
         {
             var sb = new StringBuilder();
             using (var stringStream = new StringWriter(sb))
@@ -126,6 +144,7 @@ namespace VSGallery.AtomGenerator
                 formatter.WriteTo(writer);
             }
 
+            log.Info($"Writing updated feed to {file}");
             File.WriteAllText(file, XElement.Parse(sb.ToString()).ToString());
         }
     }

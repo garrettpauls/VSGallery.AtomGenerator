@@ -28,18 +28,20 @@ namespace VSGallery.AtomGenerator.Vsix
             }
         }
 
-        private ErrorSuccess<IVsixPackage, string> _CreateFromZipManifest(string file, ZipArchiveEntry manifestEntry, ErrorSuccessFactory<IVsixPackage, string> ef)
+        private ErrorSuccess<IVsixPackage, string> _CreateFromZipManifest(string file, ZipArchiveEntry manifestEntry, Logger log, ErrorSuccessFactory<IVsixPackage, string> ef)
         {
             var packageManifest = _TryGetPackageManifest(manifestEntry);
             var vsixManifest = _TryGetVsixManifest(manifestEntry);
 
             if (packageManifest != null)
             {
+                log.Info("Loaded PackageManifest based manifest");
                 return ef.Success(new VsixWithPackageManifest(file, packageManifest));
             }
 
             if (vsixManifest != null)
             {
+                log.Info("Loaded Vsix based manifest");
                 return ef.Success(new VsixWithVsixManifest(file, vsixManifest));
             }
 
@@ -48,6 +50,8 @@ namespace VSGallery.AtomGenerator.Vsix
 
         private ErrorSuccess<IVsixPackage, string> _LoadFromFile(string file, Logger log, ErrorSuccessFactory<IVsixPackage, string> ef)
         {
+            log.Info($"Reading {file}");
+
             ZipArchive zipFile;
             try
             {
@@ -67,7 +71,7 @@ namespace VSGallery.AtomGenerator.Vsix
                     return ef.Error($"{file} does not contain a {Entry.Manifest} entry.");
                 }
 
-                return _CreateFromZipManifest(file, manifestEntry, ef);
+                return _CreateFromZipManifest(file, manifestEntry, log, ef);
             }
         }
 

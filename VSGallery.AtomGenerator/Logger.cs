@@ -30,19 +30,20 @@ namespace VSGallery.AtomGenerator
 
         public void Error(string message, Exception ex)
         {
-            _WriteLine($"ERROR: {message}");
             if (ex != null)
             {
-                _WriteLine($@"
+                message += $@"
 --------------------------------------------------
 {_ToString(ex)}
---------------------------------------------------");
+--------------------------------------------------";
             }
+
+            _WriteLine(true, message);
         }
 
         public void Info(string message)
         {
-            _WriteLine($"INFO: {message}");
+            _WriteLine(false, message);
         }
 
         private static string _ToString(Exception exception)
@@ -50,9 +51,18 @@ namespace VSGallery.AtomGenerator
             return exception.ToString();
         }
 
-        private void _WriteLine(string value)
+        private void _WriteLine(bool isError, string value)
         {
-            File.AppendAllText(mFile, value + "\r\n");
+            var color = Console.ForegroundColor;
+            if (isError)
+            {
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+            }
+            Console.WriteLine(value);
+            Console.ForegroundColor = color;
+
+            var header = isError ? "ERROR" : "INFO";
+            File.AppendAllText(mFile, $"{header}: {value}\r\n");
         }
     }
 }

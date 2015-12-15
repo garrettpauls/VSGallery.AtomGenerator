@@ -28,33 +28,48 @@ namespace VSGallery.AtomGenerator
             }
             catch (Exception ex)
             {
-                log.Error("Application level exception", ex);
+                log.Error("Unhandled exception", ex);
             }
         }
 
         private static void _GenerateAtomFeed(string rootDirectory, Logger log)
         {
+            log.Info("Loading vsix files");
             var packageFactory = new VsixPackageFactory();
             var packages = Directory
                 .EnumerateFiles(rootDirectory, "*.vsix", SearchOption.AllDirectories)
                 .Select(file => packageFactory.LoadFromFile(file, log))
                 .Do(result => result.IfError(log.Error))
-                .TakeSuccess();
+                .TakeSuccess()
+                .ToArray();
 
-            packages = _OnlyMostRecentVersions(packages);
+            packages = _OnlyMostRecentVersions(packages, log).ToArray();
 
             var feedFile = Path.Combine(rootDirectory, "atom.xml");
 
             var feedBuilder = new FeedBuilder();
-            feedBuilder.WriteFeed(feedFile, packages);
+            feedBuilder.WriteFeed(feedFile, packages, log);
+
+            log.Info("Feed generated successfully");
         }
 
-        private static IEnumerable<IVsixPackage> _OnlyMostRecentVersions(IEnumerable<IVsixPackage> packages)
+        private static IEnumerable<IVsixPackage> _OnlyMostRecentVersions(IEnumerable<IVsixPackage> packages, Logger log)
         {
-            return packages
-                .GroupBy(pkg => pkg.Id)
-                .Select(grp => grp.OrderByDescending(pkg => pkg.Version, new VersionComparer())
-                                  .First());
+            var groups = packages.GroupBy(pkg => pkg.Id);
+            var versionComparer = new VersionComparer();
+
+            foreach (var grp in groups)
+            {
+                if (grp.Count() > 1)
+                {
+                    var package = grp.OrderByDescending(pkg => pkg.Version, versionComparer).First();
+                    log.Info($"Multiple versions of {grp.Key} detected, using version {package.Version}");
+                }
+                else
+                {
+                    yield return grp.First();
+                }
+            }
         }
 
         private static void _ShowUsage()
