@@ -17,7 +17,7 @@ namespace VSGallery.AtomGenerator
         {
             var rootDirectory = new Uri(Path.GetDirectoryName(feedFile) + "\\");
 
-            var imageRoot = Path.Combine(rootDirectory.AbsolutePath, "VSIXImages");
+            var imageRoot = Path.Combine(rootDirectory.LocalPath, "VSIXImages");
             Directory.CreateDirectory(imageRoot);
 
             var feed = _ConfigureFromExistingFeed(feedFile, log);
