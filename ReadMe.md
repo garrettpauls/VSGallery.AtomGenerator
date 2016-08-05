@@ -40,6 +40,13 @@ errors occur, they will be logged to a file in the log subdirectory.
 The changelog of all versions.
 Issue details can be found by number in the [issue tracker](https://github.com/garrettpauls/VSGallery.AtomGenerator/issues).
 
+## v1.0.2
+
+* Pulled in ChrisMaddock's changes:
+  * Fixed URI format exceptions when targeting network paths.
+  * Added return code 0 for success, 1 for error.
+* Logger no longer throws an exception if it can't write to the file.
+
 ## v1.0.1
 
 * Issue #1 - zip entry names for images are normalized to support both / and \ in the manifest file.

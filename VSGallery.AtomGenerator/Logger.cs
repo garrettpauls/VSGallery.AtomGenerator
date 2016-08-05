@@ -7,20 +7,32 @@ namespace VSGallery.AtomGenerator
     {
         private readonly string mFile;
 
+        private bool mHasLoggedFileAccessError;
+
         private Logger(string file)
         {
             mFile = file;
         }
 
-        public static Logger Create(string file)
+        private void _WriteLine(bool isError, string value)
         {
-            var logDir = Directory.GetParent(file);
-            if (!logDir.Exists)
-            {
-                logDir.Create();
-            }
+            _WriteToConsole(isError, value);
 
-            return new Logger(file);
+            try
+            {
+                var header = isError ? "ERROR" : "INFO";
+                File.AppendAllText(mFile, $"{header}: {value}\r\n");
+            }
+            catch(Exception ex)
+            {
+                if(!mHasLoggedFileAccessError)
+                {
+                    mHasLoggedFileAccessError = true;
+
+                    _WriteToConsole(true, $"Could not write log to file (future write failures are not logged): {mFile}");
+                    _WriteToConsole(true, ex.ToString());
+                }
+            }
         }
 
         public void Error(string message)
@@ -30,7 +42,7 @@ namespace VSGallery.AtomGenerator
 
         public void Error(string message, Exception ex)
         {
-            if (ex != null)
+            if(ex != null)
             {
                 message += $@"
 --------------------------------------------------
@@ -51,18 +63,34 @@ namespace VSGallery.AtomGenerator
             return exception.ToString();
         }
 
-        private void _WriteLine(bool isError, string value)
+        private static void _WriteToConsole(bool isError, string value)
         {
             var color = Console.ForegroundColor;
-            if (isError)
+            if(isError)
             {
                 Console.ForegroundColor = ConsoleColor.DarkRed;
             }
             Console.WriteLine(value);
             Console.ForegroundColor = color;
+        }
 
-            var header = isError ? "ERROR" : "INFO";
-            File.AppendAllText(mFile, $"{header}: {value}\r\n");
+        public static Logger Create(string file)
+        {
+            var logDir = Directory.GetParent(file);
+            if(!logDir.Exists)
+            {
+                try
+                {
+                    logDir.Create();
+                }
+                catch(Exception ex)
+                {
+                    _WriteToConsole(true, $"Could not create directory for logs: {logDir.FullName}");
+                    _WriteToConsole(true, ex.Message);
+                }
+            }
+
+            return new Logger(file);
         }
     }
 }

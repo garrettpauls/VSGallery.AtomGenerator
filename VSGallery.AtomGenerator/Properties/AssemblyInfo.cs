@@ -1,14 +1,14 @@
 ﻿using System.Reflection;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyVersion("1.0.1.0")]
-[assembly: AssemblyFileVersion("1.0.1.0")]
+[assembly: AssemblyVersion("1.0.2.0")]
+[assembly: AssemblyFileVersion("1.0.2.0")]
 [assembly: AssemblyTitle("VSGallery.AtomGenerator")]
 [assembly: AssemblyDescription("Generates an atom feed for custom visual studio galleries.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("VSGallery.AtomGenerator")]
-[assembly: AssemblyCopyright("Copyright © Garrett Pauls 2015")]
+[assembly: AssemblyCopyright("Copyright © Garrett Pauls 2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: ComVisible(false)]
