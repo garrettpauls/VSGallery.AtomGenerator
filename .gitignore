@@ -4,3 +4,5 @@ obj/
 bin/
 /packages
 /Release
+*.user
+*.suo
