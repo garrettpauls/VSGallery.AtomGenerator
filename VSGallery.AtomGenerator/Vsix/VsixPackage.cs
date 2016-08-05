@@ -65,7 +65,7 @@ namespace VSGallery.AtomGenerator.Vsix
 
                 var iconPath = Path.Combine(destinationFolder, Id, entryName);
                 Directory.CreateDirectory(Path.GetDirectoryName(iconPath));
-                entry.ExtractToFile(iconPath, true);
+                entry.ExtractToFile(new Uri(iconPath).LocalPath, true);
 
                 return new Uri(iconPath);
             }

@@ -11,12 +11,12 @@ namespace VSGallery.AtomGenerator
 {
     public static class Program
     {
-        public static void Main(string[] args)
+        public static int Main(string[] args)
         {
             if (args.Any(arg => arg == "/?" || arg == "/help" || arg == "--help"))
             {
                 _ShowUsage();
-                return;
+                return (int) ReturnCodes.Success;
             }
 
             var rootDirectory = args.FirstOrDefault(Directory.Exists) ?? Environment.CurrentDirectory;
@@ -29,7 +29,10 @@ namespace VSGallery.AtomGenerator
             catch (Exception ex)
             {
                 log.Error("Unhandled exception", ex);
+                return (int) ReturnCodes.Error;
             }
+
+            return (int) ReturnCodes.Success;
         }
 
         private static void _GenerateAtomFeed(string rootDirectory, Logger log)
