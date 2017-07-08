@@ -40,6 +40,11 @@ errors occur, they will be logged to a file in the log subdirectory.
 The changelog of all versions.
 Issue details can be found by number in the [issue tracker](https://github.com/garrettpauls/VSGallery.AtomGenerator/issues).
 
+## v1.0.3
+
+* Pulled in baderbuddy's changes:
+  * Fixed bug preventing multiple versions of the same vsix not including any in output.
+
 ## v1.0.2
 
 * Pulled in ChrisMaddock's changes:

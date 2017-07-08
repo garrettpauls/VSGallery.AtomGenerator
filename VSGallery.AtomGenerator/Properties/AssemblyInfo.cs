@@ -1,8 +1,8 @@
 ﻿using System.Reflection;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyVersion("1.0.2.0")]
-[assembly: AssemblyFileVersion("1.0.2.0")]
+[assembly: AssemblyVersion("1.0.3.0")]
+[assembly: AssemblyFileVersion("1.0.3.0")]
 [assembly: AssemblyTitle("VSGallery.AtomGenerator")]
 [assembly: AssemblyDescription("Generates an atom feed for custom visual studio galleries.")]
 [assembly: AssemblyConfiguration("")]
