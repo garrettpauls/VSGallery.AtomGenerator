@@ -62,16 +62,13 @@ namespace VSGallery.AtomGenerator
             var versionComparer = new VersionComparer();
 
             foreach (var grp in groups)
-            {
+            { 
+                var package = grp.OrderByDescending(pkg => pkg.Version, versionComparer).First();
                 if (grp.Count() > 1)
                 {
-                    var package = grp.OrderByDescending(pkg => pkg.Version, versionComparer).First();
                     log.Info($"Multiple versions of {grp.Key} detected, using version {package.Version}");
                 }
-                else
-                {
-                    yield return grp.First();
-                }
+                yield return package;
             }
         }
 
